@@ -11,8 +11,11 @@ interface AuthState {
   message: string;
 }
 
+// Get user from local storage
+const user = JSON.parse(localStorage.getItem("user") || "{}");
+
 const initialState: AuthState = {
-  user: null,
+  user: user ? user : null,
   isLoading: false,
   isError: false,
   isSuccess: false,
