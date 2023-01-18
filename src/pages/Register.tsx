@@ -1,42 +1,34 @@
 import { useState, useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { useNavigate } from "react-router-dom";
+import { RegistrationData } from "../features/auth/authTypes";
 import { Box, Text, Stack, Input, Button } from "@chakra-ui/react";
-import { login } from "../features/auth/authSlice";
 
-export default function Login() {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+interface UserData extends RegistrationData {
+  password2: string;
+}
 
-  const { user, isLoading, isError, isSuccess, message } = useAppSelector(
-    (state) => state.auth
-  );
-
-  const [credentials, setCredentials] = useState<{
-    email: string;
-    password: string;
-  }>({
+const Register = () => {
+  const [userData, setUserData] = useState<UserData>({
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
+    password2: "",
   });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCredentials((prevState) => ({
+    setUserData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }));
   };
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    console.log("form submitted");
     e.preventDefault();
-
-    dispatch(login(credentials));
   };
 
   useEffect(() => {
-    console.log("credentials: ", credentials);
-  }, [credentials]);
+    console.log("userData: ", userData);
+  }, [userData]);
 
   return (
     <Box
@@ -76,9 +68,27 @@ export default function Login() {
               variant="outline"
               size="md"
               width="60%"
+              placeholder="First Name"
+              name="firstName"
+              value={userData.firstName}
+              onChange={onChange}
+            />
+            <Input
+              variant="outline"
+              size="md"
+              width="60%"
+              placeholder="Last Name"
+              name="lastName"
+              value={userData.lastName}
+              onChange={onChange}
+            />
+            <Input
+              variant="outline"
+              size="md"
+              width="60%"
               placeholder="Email"
               name="email"
-              value={credentials.email}
+              value={userData.email}
               onChange={onChange}
             />
             <Input
@@ -87,7 +97,16 @@ export default function Login() {
               width="60%"
               name="password"
               placeholder="Password"
-              value={credentials.password}
+              value={userData.password}
+              onChange={onChange}
+            />
+            <Input
+              variant="outline"
+              size="md"
+              width="60%"
+              placeholder="Confirm password"
+              name="password2"
+              value={userData.password2}
               onChange={onChange}
             />
             <Box
@@ -103,7 +122,7 @@ export default function Login() {
                 width="100%"
                 type="submit"
               >
-                LOGIN
+                SIGN UP
               </Button>
             </Box>
           </Stack>
@@ -111,4 +130,6 @@ export default function Login() {
       </Box>
     </Box>
   );
-}
+};
+
+export default Register;
