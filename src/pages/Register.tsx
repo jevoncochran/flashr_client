@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { useNavigate } from "react-router-dom";
+import { RegistrationData } from "../features/auth/authTypes";
 import { Box, Text, Stack, Input, Button } from "@chakra-ui/react";
-import { login, reset } from "../features/auth/authSlice";
+import { register, reset } from "../features/auth/authSlice";
 import { toast } from "react-toastify";
 
-export default function Login() {
+interface UserData extends RegistrationData {
+  password2?: string;
+}
+
+const Register = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -13,16 +18,16 @@ export default function Login() {
     (state) => state.auth
   );
 
-  const [credentials, setCredentials] = useState<{
-    email: string;
-    password: string;
-  }>({
+  const [userData, setUserData] = useState<UserData>({
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
+    password2: "",
   });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCredentials((prevState) => ({
+    setUserData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }));
@@ -31,7 +36,14 @@ export default function Login() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    dispatch(login(credentials));
+    if (userData.password2 === "") {
+      toast.error("Please confirm password");
+    } else if (userData.password !== userData.password2) {
+      toast.error("Passwords do not match");
+    } else {
+      delete userData.password2;
+      dispatch(register(userData));
+    }
   };
 
   useEffect(() => {
@@ -87,18 +99,47 @@ export default function Login() {
                 variant="outline"
                 size="md"
                 width="60%"
-                placeholder="Email"
-                name="email"
-                value={credentials.email}
+                placeholder="First Name"
+                name="firstName"
+                value={userData.firstName}
                 onChange={onChange}
               />
               <Input
                 variant="outline"
                 size="md"
                 width="60%"
+                placeholder="Last Name"
+                name="lastName"
+                value={userData.lastName}
+                onChange={onChange}
+              />
+              <Input
+                variant="outline"
+                size="md"
+                width="60%"
+                placeholder="Email"
+                name="email"
+                value={userData.email}
+                onChange={onChange}
+              />
+              <Input
+                variant="outline"
+                size="md"
+                width="60%"
+                type="password"
                 name="password"
                 placeholder="Password"
-                value={credentials.password}
+                value={userData.password}
+                onChange={onChange}
+              />
+              <Input
+                variant="outline"
+                size="md"
+                width="60%"
+                type="password"
+                placeholder="Confirm password"
+                name="password2"
+                value={userData.password2}
                 onChange={onChange}
               />
               <Box
@@ -114,7 +155,7 @@ export default function Login() {
                   width="100%"
                   type="submit"
                 >
-                  LOGIN
+                  SIGN UP
                 </Button>
               </Box>
             </Stack>
@@ -123,4 +164,6 @@ export default function Login() {
       )}
     </Box>
   );
-}
+};
+
+export default Register;
