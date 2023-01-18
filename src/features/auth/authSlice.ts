@@ -12,10 +12,10 @@ interface AuthState {
 }
 
 // Get user from local storage
-const user = JSON.parse(localStorage.getItem("user") || "{}");
+const storedUser = localStorage.getItem("user");
 
 const initialState: AuthState = {
-  user: user ? user : null,
+  user: storedUser ? JSON.parse(storedUser) : null,
   isLoading: false,
   isError: false,
   isSuccess: false,
@@ -60,7 +60,7 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    reset: (state, action) => {
+    reset: (state) => {
       (state.isLoading = false),
         (state.isError = false),
         (state.isSuccess = false),
@@ -99,5 +99,7 @@ export const authSlice = createSlice({
       });
   },
 });
+
+export const { reset } = authSlice.actions;
 
 export default authSlice.reducer;
