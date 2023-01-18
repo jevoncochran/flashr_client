@@ -1,21 +1,32 @@
 // import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Route,
+  createRoutesFromElements,
+} from "react-router-dom";
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import { ChakraProvider } from "@chakra-ui/react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/">
+      <Route index element={<Home />} />
+      <Route path="login" element={<Login />} />
+      <Route path="register" element={<Register />} />
+    </Route>
+  )
+);
+
 function App() {
   return (
     <>
       <ChakraProvider>
-        <Router>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-          </Routes>
-        </Router>
+        <RouterProvider router={router} />
       </ChakraProvider>
       <ToastContainer />
     </>
