@@ -4,6 +4,7 @@ import axios from "axios";
 import { SimpleGrid } from "@chakra-ui/react";
 import FlashCard from "../components/FlashCard";
 import CategoryBody from "../components/CategoryBody";
+import { useNavigate } from "react-router-dom";
 
 interface Category {
   id: string;
@@ -11,6 +12,7 @@ interface Category {
 }
 
 const Home = () => {
+  const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -28,12 +30,18 @@ const Home = () => {
       });
   }, []);
 
+  const onCardClick = (category: Category) => {
+    console.log("card has been clicked");
+    localStorage.setItem("selectedCategory", JSON.stringify(category));
+    navigate("/cards");
+  };
+
   return (
     <>
       <h1>Home Page</h1>
       <SimpleGrid columns={3} spacing="40px">
         {categories.map((category) => (
-          <FlashCard key={category.id}>
+          <FlashCard key={category.id} onClick={() => onCardClick(category)}>
             <CategoryBody category={category.title} />
           </FlashCard>
         ))}
