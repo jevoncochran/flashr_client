@@ -1,6 +1,4 @@
-import React, { ReactNode } from "react";
 import { Card, CardBody, Text } from "@chakra-ui/react";
-import CategoryBody from "./CategoryBody";
 
 interface FlashCardProps {
   children: JSX.Element;
