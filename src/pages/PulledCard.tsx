@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAppSelector } from "../app/hooks";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Box, Icon } from "@chakra-ui/react";
+import { Box, Icon, Button, Stack } from "@chakra-ui/react";
 import {
   IoCaretBackCircleSharp,
   IoCaretForwardCircleSharp,
@@ -39,13 +39,17 @@ const PulledCard = () => {
 
   const { user } = useAppSelector((state) => state.auth);
 
-  // Get selected category from local storage
+  // Get necessary data from local storage
   const storedCategory = localStorage.getItem("selectedCategory");
   const category = storedCategory ? JSON.parse(storedCategory) : null;
+
+  const storedShowDeckVal = localStorage.getItem("showDeck");
+  const showDeckVal = storedShowDeckVal ? JSON.parse(storedShowDeckVal) : false;
 
   const [deck, setDeck] = useState<DeckCard[]>([]);
   const [side, setSide] = useState<Side>("front");
   const [index, setIndex] = useState(0);
+  const [showDeck, setShowDeck] = useState(showDeckVal);
 
   const getNextCard = () => {
     if (index === deck.length - 1) return;
@@ -81,6 +85,14 @@ const PulledCard = () => {
     console.log("deck: ", deck);
   }, [deck]);
 
+  useEffect(() => {
+    if (showDeck) {
+      localStorage.setItem("showDeck", JSON.stringify(true));
+    } else {
+      localStorage.setItem("showDeck", JSON.stringify(false));
+    }
+  }, [showDeck]);
+
   return (
     <>
       <Box
@@ -90,42 +102,50 @@ const PulledCard = () => {
         justifyContent="center"
         alignItems="center"
       >
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          //   border="1px dashed black"
-          width="600px"
-        >
-          <Icon
-            as={IoCaretBackCircleSharp}
-            boxSize={10}
-            onClick={getPrevCard}
-          />
-          {deck.length > 0 ? (
-            <FlashCard
-              transform={
-                side === "back"
-                  ? "rotateY(180deg) perspective(1000px)"
-                  : "rotateY(0deg)"
-              }
-              transition="300ms"
-            >
-              <DeckCardBody
-                cardInfo={deck[index]}
-                side={side}
-                setSide={setSide}
-              />
-            </FlashCard>
-          ) : (
-            <p>Retrieving cards...</p>
-          )}
-          <Icon
-            as={IoCaretForwardCircleSharp}
-            boxSize={10}
-            onClick={getNextCard}
-          />
-        </Box>
+        {!showDeck && (
+          <Stack spacing={8}>
+            <Button onClick={() => setShowDeck(true)}>BEGIN</Button>
+            <Button>ADD CARDS</Button>
+          </Stack>
+        )}
+        {showDeck && (
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            //   border="1px dashed black"
+            width="600px"
+          >
+            <Icon
+              as={IoCaretBackCircleSharp}
+              boxSize={10}
+              onClick={getPrevCard}
+            />
+            {deck.length > 0 ? (
+              <FlashCard
+                transform={
+                  side === "back"
+                    ? "rotateY(180deg) perspective(1000px)"
+                    : "rotateY(0deg)"
+                }
+                transition="300ms"
+              >
+                <DeckCardBody
+                  cardInfo={deck[index]}
+                  side={side}
+                  setSide={setSide}
+                />
+              </FlashCard>
+            ) : (
+              <p>Retrieving cards...</p>
+            )}
+            <Icon
+              as={IoCaretForwardCircleSharp}
+              boxSize={10}
+              onClick={getNextCard}
+            />
+          </Box>
+        )}
       </Box>
     </>
   );
