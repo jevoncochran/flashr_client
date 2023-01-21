@@ -17,10 +17,19 @@ const Home = () => {
 
   const [categories, setCategories] = useState<Category[]>([]);
 
+  const onCardClick = (category: Category) => {
+    localStorage.setItem("selectedCategory", JSON.stringify(category));
+    navigate("/cards");
+  };
+
   useEffect(() => {
     axios
       .get("/categories", {
-        headers: { Authorization: `Bearer ${user?.token}` },
+        headers: {
+          // Added this conditional logic because without it, the token part of authorization was being set as 'undefined' (i.e. a string value) when token is undefined
+          // That was problematic because the backend logic expects an undefined value in this case
+          Authorization: user?.token ? `Bearer ${user?.token}` : `Bearer `,
+        },
       })
       .then((res) => {
         setCategories(res.data);
@@ -30,11 +39,11 @@ const Home = () => {
       });
   }, []);
 
-  const onCardClick = (category: Category) => {
-    console.log("card has been clicked");
-    localStorage.setItem("selectedCategory", JSON.stringify(category));
-    navigate("/cards");
-  };
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user]);
 
   return (
     <>
