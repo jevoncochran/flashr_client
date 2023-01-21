@@ -82,16 +82,18 @@ const PulledCard = () => {
   }, []);
 
   useEffect(() => {
-    console.log("deck: ", deck);
-  }, [deck]);
-
-  useEffect(() => {
     if (showDeck) {
       localStorage.setItem("showDeck", JSON.stringify(true));
     } else {
       localStorage.setItem("showDeck", JSON.stringify(false));
     }
   }, [showDeck]);
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user]);
 
   return (
     <>
