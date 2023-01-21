@@ -88,6 +88,7 @@ export default function Login() {
                 size="md"
                 width="60%"
                 placeholder="Email"
+                type="text"
                 name="email"
                 value={credentials.email}
                 onChange={onChange}
@@ -96,6 +97,7 @@ export default function Login() {
                 variant="outline"
                 size="md"
                 width="60%"
+                type="password"
                 name="password"
                 placeholder="Password"
                 value={credentials.password}
