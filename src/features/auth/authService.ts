@@ -1,6 +1,7 @@
 import axios from "axios";
 import { RegistrationData, LoginData } from "./authTypes";
 
+// Register user
 const register = async (registrationData: RegistrationData) => {
   const response = await axios.post("/auth/register", registrationData);
 
@@ -11,6 +12,7 @@ const register = async (registrationData: RegistrationData) => {
   return response.data;
 };
 
+// Login user
 const login = async (loginData: LoginData) => {
   const response = await axios.post("/auth/login", loginData);
 
@@ -21,6 +23,11 @@ const login = async (loginData: LoginData) => {
   return response.data;
 };
 
-const authService = { register, login };
+// Logout user
+const logout = () => {
+  localStorage.removeItem("user");
+};
+
+const authService = { register, login, logout };
 
 export default authService;
