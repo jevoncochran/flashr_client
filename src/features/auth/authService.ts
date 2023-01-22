@@ -26,6 +26,8 @@ const login = async (loginData: LoginData) => {
 // Logout user
 const logout = () => {
   localStorage.removeItem("user");
+  localStorage.removeItem("showDeck");
+  localStorage.removeItem("selectedCategory");
 };
 
 const authService = { register, login, logout };

@@ -47,7 +47,6 @@ const Home = () => {
 
   return (
     <>
-      <h1>Home Page</h1>
       <SimpleGrid columns={3} spacing="40px">
         {categories.map((category) => (
           <FlashCard key={category.id} onClick={() => onCardClick(category)}>

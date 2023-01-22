@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { useAppSelector } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { getCards } from "../features/cards/cardSlice";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { Box, Icon, Button, Stack } from "@chakra-ui/react";
 import {
   IoCaretBackCircleSharp,
@@ -14,7 +14,8 @@ import { DeckCard } from "../types";
 export type Side = "front" | "back";
 
 // Fisher-Yates shuffle which randomizes card order
-const shuffle = (array: []) => {
+const shuffle = (array: DeckCard[]) => {
+  const arrayCopy = [...array];
   let currentIndex = array.length,
     randomIndex;
 
@@ -25,19 +26,21 @@ const shuffle = (array: []) => {
     currentIndex--;
 
     // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
+    [arrayCopy[currentIndex], arrayCopy[randomIndex]] = [
+      arrayCopy[randomIndex],
+      arrayCopy[currentIndex],
     ];
   }
 
-  return array;
+  return arrayCopy;
 };
 
 const PulledCard = () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const { user } = useAppSelector((state) => state.auth);
+  const { cards, isLoading } = useAppSelector((state) => state.cards);
 
   // Get necessary data from local storage
   const storedCategory = localStorage.getItem("selectedCategory");
@@ -46,13 +49,13 @@ const PulledCard = () => {
   const storedShowDeckVal = localStorage.getItem("showDeck");
   const showDeckVal = storedShowDeckVal ? JSON.parse(storedShowDeckVal) : false;
 
-  const [deck, setDeck] = useState<DeckCard[]>([]);
   const [side, setSide] = useState<Side>("front");
   const [index, setIndex] = useState(0);
+  const [shuffledDeck, setShuffledDeck] = useState<DeckCard[]>([]);
   const [showDeck, setShowDeck] = useState(showDeckVal);
 
   const getNextCard = () => {
-    if (index === deck.length - 1) return;
+    if (index === shuffledDeck.length - 1) return;
     setIndex(index + 1);
     setSide("front");
   };
@@ -68,18 +71,12 @@ const PulledCard = () => {
       navigate("/");
     }
 
-    axios
-      .get(`/categories/${category.id}/cards`, {
-        headers: { Authorization: `Bearer ${user?.token}` },
-      })
-      .then((res) => {
-        const shuffledDeck = shuffle(res.data);
-        setDeck(shuffledDeck);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    dispatch(getCards(category.id));
   }, []);
+
+  useEffect(() => {
+    setShuffledDeck(shuffle(cards));
+  }, [cards]);
 
   useEffect(() => {
     if (showDeck) {
@@ -123,7 +120,7 @@ const PulledCard = () => {
               boxSize={10}
               onClick={getPrevCard}
             />
-            {deck.length > 0 ? (
+            {!isLoading ? (
               <FlashCard
                 transform={
                   side === "back"
@@ -133,7 +130,7 @@ const PulledCard = () => {
                 transition="300ms"
               >
                 <DeckCardBody
-                  cardInfo={deck[index]}
+                  cardInfo={shuffledDeck[index]}
                   side={side}
                   setSide={setSide}
                 />

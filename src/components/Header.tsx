@@ -23,11 +23,13 @@ const Header = () => {
       height="64px"
       padding="0 12px"
     >
-      <BreadcrumbItem>
-        <BreadcrumbLink as={Link} to="/">
-          Decks
-        </BreadcrumbLink>
-      </BreadcrumbItem>
+      {user && (
+        <BreadcrumbItem>
+          <BreadcrumbLink as={Link} to="/">
+            Decks
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+      )}
       {!user && (
         <BreadcrumbItem>
           <BreadcrumbLink as={Link} to="/login">
