@@ -45,6 +45,7 @@ export const cardSlice = createSlice({
     });
     builder.addCase(getCards.fulfilled, (state, action) => {
       state.isLoading = false;
+      state.isSuccess = true;
       state.cards = action.payload;
     });
     builder.addCase(getCards.rejected, (state, action) => {
