@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { getCategories } from "../features/categories/categorySlice";
+import {
+  getCategories,
+  createCategory,
+} from "../features/categories/categorySlice";
 import { SimpleGrid, Icon, Box, Text, Input } from "@chakra-ui/react";
 import { MdAddBox } from "react-icons/md";
 import FlashCard from "../components/FlashCard";
@@ -18,10 +21,19 @@ const Home = () => {
   );
 
   const [isAddMode, setIsAddMode] = useState(false);
+  const [newCategory, setNewCategory] = useState("");
 
   const onCardClick = (category: Category) => {
     localStorage.setItem("selectedCategory", JSON.stringify(category));
     navigate("/cards");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      dispatch(createCategory(newCategory));
+      setIsAddMode(false);
+      setNewCategory("");
+    }
   };
 
   useEffect(() => {
@@ -35,7 +47,6 @@ const Home = () => {
 
     dispatch(getCategories());
   }, [user]);
-
 
   return (
     <>
@@ -71,7 +82,14 @@ const Home = () => {
                 left="50%"
                 margin="-50px 0 0 -100px"
               >
-                <Input type="text" placeholder="New Category Title" />
+                <Input
+                  type="text"
+                  name="newCategory"
+                  placeholder="New Category Title"
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
               </Box>
             )}
           </FlashCard>
