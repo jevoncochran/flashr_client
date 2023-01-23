@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { getCategories } from "../features/categories/categorySlice";
+import {
+  getCategories,
+  createCategory,
+} from "../features/categories/categorySlice";
 import { SimpleGrid, Icon, Box, Text, Input } from "@chakra-ui/react";
 import { MdAddBox } from "react-icons/md";
 import FlashCard from "../components/FlashCard";
@@ -27,8 +30,9 @@ const Home = () => {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      console.log("User has pressed enter");
+      dispatch(createCategory(newCategory));
       setIsAddMode(false);
+      setNewCategory("");
     }
   };
 
