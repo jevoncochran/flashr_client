@@ -9,7 +9,7 @@ import {
 } from "react-icons/io5";
 import FlashCard from "../components/FlashCard";
 import DeckCardBody from "../components/DeckCardBody";
-import { DeckCard } from "../types";
+import { DeckCard } from "../Types";
 
 export type Side = "front" | "back";
 
@@ -40,7 +40,9 @@ const PulledCard = () => {
   const navigate = useNavigate();
 
   const { user } = useAppSelector((state) => state.auth);
-  const { cards, isLoading } = useAppSelector((state) => state.cards);
+  const { cards, isLoading, isSuccess } = useAppSelector(
+    (state) => state.cards
+  );
 
   // Get necessary data from local storage
   const storedCategory = localStorage.getItem("selectedCategory");
@@ -92,6 +94,10 @@ const PulledCard = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    console.log("shuffledDeck: ", shuffledDeck);
+  }, [shuffledDeck]);
+
   return (
     <>
       <Box
@@ -107,20 +113,20 @@ const PulledCard = () => {
             <Button>ADD CARDS</Button>
           </Stack>
         )}
-        {showDeck && (
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            //   border="1px dashed black"
-            width="600px"
-          >
-            <Icon
-              as={IoCaretBackCircleSharp}
-              boxSize={10}
-              onClick={getPrevCard}
-            />
-            {!isLoading ? (
+        {showDeck &&
+          (!isLoading ? (
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              //   border="1px dashed black"
+              width="600px"
+            >
+              <Icon
+                as={IoCaretBackCircleSharp}
+                boxSize={10}
+                onClick={getPrevCard}
+              />
               <FlashCard
                 transform={
                   side === "back"
@@ -135,16 +141,19 @@ const PulledCard = () => {
                   setSide={setSide}
                 />
               </FlashCard>
-            ) : (
+
+              <Icon
+                as={IoCaretForwardCircleSharp}
+                boxSize={10}
+                onClick={getNextCard}
+              />
+            </Box>
+          ) : (
+            <Box>
+              {" "}
               <p>Retrieving cards...</p>
-            )}
-            <Icon
-              as={IoCaretForwardCircleSharp}
-              boxSize={10}
-              onClick={getNextCard}
-            />
-          </Box>
-        )}
+            </Box>
+          ))}
       </Box>
     </>
   );
