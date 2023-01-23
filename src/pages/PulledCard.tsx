@@ -9,7 +9,7 @@ import {
 } from "react-icons/io5";
 import FlashCard from "../components/FlashCard";
 import DeckCardBody from "../components/DeckCardBody";
-import { DeckCard } from "../types";
+import { DeckCard } from "../Types";
 
 export type Side = "front" | "back";
 

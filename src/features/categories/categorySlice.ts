@@ -1,29 +1,29 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import cardService from "./cardService";
-import { DeckCard } from "../../Types";
+import categoryService from "./categoryService";
+import { Category } from "../../Types";
 
-interface CardState {
-  cards: DeckCard[];
+interface CategoryState {
+  categories: Category[];
   isLoading: boolean;
   isError: boolean;
   isSuccess: boolean;
   message: string;
 }
 
-const initialState: CardState = {
-  cards: [],
+const initialState: CategoryState = {
+  categories: [],
   isLoading: false,
   isError: false,
   isSuccess: false,
   message: "",
 };
 
-export const getCards = createAsyncThunk(
-  "/cards/getCards",
-  async (categoryId: string, thunkApi) => {
+export const getCategories = createAsyncThunk(
+  "/categories/getCategories",
+  async (_, thunkApi) => {
     try {
       const token = thunkApi.getState().auth.user.token;
-      return await cardService.getCards(categoryId, token);
+      return await categoryService.getCategories(token);
     } catch (error) {
       const message =
         (err.response && err.response.data && err.response.data.message) ||
@@ -35,20 +35,20 @@ export const getCards = createAsyncThunk(
   }
 );
 
-export const cardSlice = createSlice({
-  name: "cards",
+export const categorySlice = createSlice({
+  name: "categories",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getCards.pending, (state) => {
+    builder.addCase(getCategories.pending, (state) => {
       state.isLoading = true;
     });
-    builder.addCase(getCards.fulfilled, (state, action) => {
+    builder.addCase(getCategories.fulfilled, (state, action) => {
       state.isLoading = false;
       state.isSuccess = true;
-      state.cards = action.payload;
+      state.categories = action.payload;
     });
-    builder.addCase(getCards.rejected, (state, action) => {
+    builder.addCase(getCategories.rejected, (state, action) => {
       state.isLoading = false;
       state.isError = true;
       state.message = action.payload;
@@ -56,4 +56,4 @@ export const cardSlice = createSlice({
   },
 });
 
-export default cardSlice.reducer;
+export default categorySlice.reducer;

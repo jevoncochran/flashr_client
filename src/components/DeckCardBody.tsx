@@ -1,6 +1,6 @@
 import { Box, Text, Icon } from "@chakra-ui/react";
 import { HiOutlineArrowUturnRight } from "react-icons/hi2";
-import { DeckCard } from "../types";
+import { DeckCard } from "../Types";
 import { Side } from "../pages/PulledCard";
 
 interface DeckCardBodyProps {

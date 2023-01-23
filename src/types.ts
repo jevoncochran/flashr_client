@@ -4,3 +4,8 @@ export interface DeckCard {
   back: string;
   archived: boolean;
 }
+
+export interface Category {
+  id: string;
+  title: string;
+}
