@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { getCards } from "../features/cards/cardSlice";
+import { getCards, logGuessResult } from "../features/cards/cardSlice";
 import { useNavigate } from "react-router-dom";
 import { Box, Icon, Button, Stack } from "@chakra-ui/react";
 import {
@@ -10,6 +10,7 @@ import {
 import FlashCard from "../components/FlashCard";
 import DeckCardBody from "../components/DeckCardBody";
 import { DeckCard } from "../Types";
+import TinderCard, { Direction } from "react-tinder-card";
 
 export type Side = "front" | "back";
 
@@ -56,6 +57,29 @@ const PulledCard = () => {
   const [shuffledDeck, setShuffledDeck] = useState<DeckCard[]>([]);
   const [showDeck, setShowDeck] = useState(showDeckVal);
 
+  const onSwipe = (direction: Direction) => {
+    console.log(`The card was swiped ${direction}`);
+    if (direction === "left") {
+      dispatch(
+        logGuessResult({
+          categoryId: category.id,
+          cardId: shuffledDeck[index].id,
+          cardInfo: shuffledDeck[index],
+          guessResult: "incorrect",
+        })
+      );
+    } else {
+      dispatch(
+        logGuessResult({
+          categoryId: category.id,
+          cardId: shuffledDeck[index].id,
+          cardInfo: shuffledDeck[index],
+          guessResult: "correct",
+        })
+      );
+    }
+  };
+
   const getNextCard = () => {
     if (index === shuffledDeck.length - 1) return;
     setIndex(index + 1);
@@ -94,10 +118,6 @@ const PulledCard = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    console.log("shuffledDeck: ", shuffledDeck);
-  }, [shuffledDeck]);
-
   return (
     <>
       <Box
@@ -127,20 +147,22 @@ const PulledCard = () => {
                 boxSize={10}
                 onClick={getPrevCard}
               />
-              <FlashCard
-                transform={
-                  side === "back"
-                    ? "rotateY(180deg) perspective(1000px)"
-                    : "rotateY(0deg)"
-                }
-                transition="300ms"
-              >
-                <DeckCardBody
-                  cardInfo={shuffledDeck[index]}
-                  side={side}
-                  setSide={setSide}
-                />
-              </FlashCard>
+              <TinderCard onSwipe={onSwipe}>
+                <FlashCard
+                  transform={
+                    side === "back"
+                      ? "rotateY(180deg) perspective(1000px)"
+                      : "rotateY(0deg)"
+                  }
+                  transition="300ms"
+                >
+                  <DeckCardBody
+                    cardInfo={shuffledDeck[index]}
+                    side={side}
+                    setSide={setSide}
+                  />
+                </FlashCard>
+              </TinderCard>
 
               <Icon
                 as={IoCaretForwardCircleSharp}
